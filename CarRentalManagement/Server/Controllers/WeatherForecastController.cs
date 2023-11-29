@@ -1,7 +1,7 @@
 using CarRentalManagement.Shared;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
+    
 namespace CarRentalManagement.Server.Controllers
 {
     //[Authorize]
@@ -11,6 +11,7 @@ namespace CarRentalManagement.Server.Controllers
     {
         private static readonly string[] Summaries = new[]
         {
+            //hard coded data 
         "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
     };
 
@@ -22,6 +23,7 @@ namespace CarRentalManagement.Server.Controllers
         }
 
         [HttpGet]
+        //get method HTTP verb: retrieve data.
         public IEnumerable<WeatherForecast> Get()
         {
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
