@@ -1,0 +1,54 @@
+﻿@page "/makes/create"
+@inject HttpClient _client
+@inject NavigationManager _navManager
+
+<h3 class="card-title ">Create New Makes</h3>
+@* horizontal rule and breakline *@
+<hr />
+<br />
+
+<EditForm Model="@make" OnValidSubmit="CreateMake">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label>Make: </label>
+        <div>
+            @* 6. input select = drop down list *@
+            <InputSelect @bind-Value="make.Id" class="form-control">
+                <option value="">-- Select Make --</option>
+                @if (Makes != null)
+                {
+                    foreach (var make in Makes)
+                    {
+                        @* 7. @ = calling variable *@
+                        <option value="@make.Id">@make.Name</option>
+                    }
+                }
+            </InputSelect>
+            <ValidationMessage For="@(() => make.Id)" />
+        </div>
+    </div>
+    <br />
+
+    <button type="submit" class="btn btn-success btn-block">
+        Create Make
+    </button>
+</EditForm>
+
+@code {
+    Make make = new Make();
+
+    private IList<Make>? Makes;
+
+    protected async override Task OnInitializedAsync()
+    {
+        Makes = await _client.GetFromJsonAsync<List<Make>>($"{Endpoints.MakesEndpoint}");
+    }
+
+    private async Task CreateMake()
+    {
+        await _client.PostAsJsonAsync(Endpoints.MakesEndpoint, make);
+        _navManager.NavigateTo("/makes/");
+    }
+}

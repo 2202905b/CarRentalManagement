@@ -1,0 +1,59 @@
+﻿@page "/models/create"
+@inject HttpClient _client
+@inject NavigationManager _navManager
+
+<h3 class="card-title ">Create New Models</h3>
+<hr />
+<br />
+
+<EditForm Model="@model" OnValidSubmit="CreateModel">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label>Model: </label>
+        <div>
+            @* 6. input select = drop down list *@
+            <InputSelect @bind-Value="model.Id" class="form-control">
+                <option value="">-- Select Model --</option>
+                @if (Models != null)
+                {
+                    foreach (var model in Models)
+                    {
+                        @* 7. @ = calling variable *@
+                        <option value="@model.Id">@model.Name</option>
+                    }
+                }
+            </InputSelect>
+            <ValidationMessage For="@(() => model.Id)"/>
+        </div>
+    </div>
+    <br/>
+
+    <button type="submit" class="btn btn-success btn-block">
+        Create Model
+    </button>
+
+</EditForm>
+
+@code {
+    // creating Make object
+    Model model = new Model();
+
+    // ? = Nullable
+    private IList<Model>? Models;
+
+    // same function af the vehicle one, but instead of getting vehicles it's getting these 3.
+    // this is the dropdown list that will summon upon loading the page
+    protected async override Task OnInitializedAsync()
+    {
+        Models = await _client.GetFromJsonAsync<List<Model>>($"{Endpoints.ModelsEndpoint}");
+    }
+
+    // creating when button clicked
+    private async Task CreateModel()
+    {
+        await _client.PostAsJsonAsync(Endpoints.VehiclesEndpoint, model);
+        _navManager.NavigateTo("/models/");
+    }
+}

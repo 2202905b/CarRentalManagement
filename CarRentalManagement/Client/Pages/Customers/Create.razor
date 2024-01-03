@@ -1,0 +1,132 @@
+﻿@page "/customers/create"
+@inject HttpClient _client
+@inject NavigationManager _navManager
+
+<h3 class="card-title ">Create New Customers</h3>
+@* horizontal rule and breakline *@
+<hr />
+<br /> 
+
+<EditForm Model="@customer" OnValidSubmit="CreateCustomer">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label>First Name: </label>
+        <div>
+        
+            <InputText @bind-Value="customer.FirstName" class="form-control" />
+            <ValidationMessage For="@(() => customer.FirstName)" />
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Last Name: </label>
+        <div>
+            
+            <InputText @bind-Value="customer.LastName" class="form-control" />
+            <ValidationMessage For="@(() => customer.LastName)" />
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Driving License: </label>
+        <div>
+            @* 6. input select = drop down list *@
+            <InputText @bind-Value="customer.DrivingLicense" class="form-control">
+                <option value=""> </option>
+                @if (Customers != null)
+                {
+                    foreach (var cutomer in Customers)
+                    {
+                        @* 7. @ = calling variable *@
+                        <option value="@customer.DrivingLicense">@customer.DrivingLicense</option>
+                    }
+                }
+            </InputText>
+            <ValidationMessage For="@(() => customer.DrivingLicense)" />
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Address: </label>
+        <div>
+            @* 6. input select = drop down list *@
+            <InputText @bind-Value="customer.Address" class="form-control">
+                <option value=""> </option>
+                @if (Customers != null)
+                {
+                    foreach (var cutomer in Customers)
+                    {
+                        @* 7. @ = calling variable *@
+                        <option value="@customer.Address">@customer.Address</option>
+                    }
+                }
+            </InputText>
+            <ValidationMessage For="@(() => customer.Address)" />
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Contact Number: </label>
+        <div>
+            @* 6. input select = drop down list *@
+            <InputNumber @bind-Value="customer.ContactNumber" class="form-control">
+                <option value=""> </option>
+                @if (Customers != null)
+                {
+                    foreach (var cutomer in Customers)
+                    {
+                        @* 7. @ = calling variable *@
+                        <option value="@customer.ContactNumber">@customer.ContactNumber</option>
+                    }
+                }
+            </InputNumber>
+            <ValidationMessage For="@(() => customer.ContactNumber)" />
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Email Address: </label>
+        <div>
+            @* 6. input select = drop down list *@
+            <InputText @bind-Value="customer.EmailAddress" class="form-control">
+                <option value=""></option>
+                @if (Customers != null)
+                {
+                    foreach (var cutomer in Customers)
+                    {
+                        @* 7. @ = calling variable *@
+                        <option value="@customer.EmailAddress">@customer.EmailAddress</option>
+                    }
+                }
+            </InputText>
+            <ValidationMessage For="@(() => customer.EmailAddress)" />
+        </div>
+    </div>
+    <br />
+
+    <button type="submit" class="btn btn-success btn-block">
+        Create Customer
+    </button>
+</EditForm>
+
+@code {
+    Customer customer = new Customer();
+
+    private IList<Customer>? Customers;
+
+    // same function af the vehicle one, but instead of getting vehicles it's getting these 3.
+    // this is the dropdown list that will summon upon loading the page
+    protected async override Task OnInitializedAsync()
+    {
+        Customers = await _client.GetFromJsonAsync<List<Customer>>($"{Endpoints.CustomersEndpoint}");
+    }
+
+    // creating when button clicked
+    private async Task CreateCustomer()
+    {
+        await _client.PostAsJsonAsync(Endpoints.CustomersEndpoint, customer);
+        _navManager.NavigateTo("/customers/");
+    }
+}

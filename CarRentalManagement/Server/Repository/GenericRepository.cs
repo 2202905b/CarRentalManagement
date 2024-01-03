@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace CarRentalManagement.Server.Repository
 {
+    //does d.b calling, and deals with applicationdbcontext (generic way of writing = can reuse)
     public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
         private readonly ApplicationDbContext _context;

@@ -15,6 +15,8 @@ namespace CarRentalManagement.Server.Repository
 {
     public class UnitOfWork : IUnitOfWork
     {
+        //creates an interface for these things.
+        // only these  changes in the project
         private readonly ApplicationDbContext _context;
         private IGenericRepository<Make> _makes;
         private IGenericRepository<Model> _models;

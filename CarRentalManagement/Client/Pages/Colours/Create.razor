@@ -1,0 +1,57 @@
+﻿@page "/colours/create"
+@inject HttpClient _client
+@inject NavigationManager _navManager
+
+<h3 class="card-title ">Create New Cololurs</h3>
+@* horizontal rule and breakline *@
+<hr />
+<br />
+
+<EditForm Model="@colour" OnValidSubmit="CreateColour"> 
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label>Colour: </label>
+        <div>
+            @* 6. input select = drop down list *@
+            <InputSelect @bind-Value="colour.Id" class="form-control">
+                <option value="">-- Select Colour --</option>
+                @if (Colours != null)
+                {
+                    foreach (var colour in Colours)
+                    {
+                        @* 7. @ = calling variable *@
+                        <option value="@colour.Id">@colour.Name</option>
+                    }
+                }
+            </InputSelect>
+            <ValidationMessage For="@(() => colour.Id)" />
+        </div>
+    </div>
+    <br />
+
+    <button type="submit" class="btn btn-success btn-block">
+        Create Vehicle
+    </button>
+</EditForm>
+
+@code {
+    Colour colour = new Colour();
+
+    private IList<Colour>? Colours;
+
+    // same function af the vehicle one, but instead of getting vehicles it's getting these 3.
+    // this is the dropdown list that will summon upon loading the page
+    protected async override Task OnInitializedAsync()
+    {
+        Colours = await _client.GetFromJsonAsync<List<Colour>>($"{Endpoints.ColoursEndpoint}");
+    }
+
+    // creating when button clicked
+    private async Task CreateColour()
+    {
+        await _client.PostAsJsonAsync(Endpoints.ColoursEndpoint, colour);
+        _navManager.NavigateTo("/colours/");
+    }
+}

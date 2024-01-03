@@ -17,7 +17,7 @@ namespace CarRentalManagement.Server.Controllers
     {
         //Refractored
         //private readonly ApplicationDbContext _context;
-
+        // Repository. Creating interface here to use. 
         private readonly IUnitOfWork _unitOfWork;
 
         //Refractored
@@ -32,20 +32,32 @@ namespace CarRentalManagement.Server.Controllers
         // GET: api/Makes
         [HttpGet]
         //public async Task<ActionResult<IEnumerable<Make>>> GetMakes()
+
+        // Getting ALL Make (with s).   
         public async Task<IActionResult> GetMakes()
         {
-          //if (_context.Makes == null)
-          //{
-          //    return NotFound();
-          //}
+            //if (_context.Makes == null)
+            //{
+            //    return NotFound();
+            //}
             //return await _context.Makes.ToListAsync();
+
+            // Getting data from unitOfWork instead of database directily(_context).
             var makes = await _unitOfWork.Makes.GetAll();
+
+            if (makes == null)
+            {
+                return NotFound();
+            }
+
             return Ok(makes);
         }
 
         // GET: api/Makes/5
         [HttpGet("{id}")]
         //public async Task<ActionResult<Make>> GetMake(int id)
+
+        // Getting ONE make(no s).
         public async Task<IActionResult> GetMake(int id)
         {
           //if (_context.Makes == null)
@@ -53,6 +65,8 @@ namespace CarRentalManagement.Server.Controllers
           //    return NotFound();
           //}
             //var make = await _context.Makes.FindAsync(id);
+
+            // Lumdar expression. (if q.ID == id then that means q is the makes that yw)
             var make = await _unitOfWork.Makes.Get(q => q.Id == id);
 
             if (make == null)
@@ -111,6 +125,7 @@ namespace CarRentalManagement.Server.Controllers
             await _unitOfWork.Makes.Insert(make);
             await _unitOfWork.Save(HttpContext);
 
+            // ?
             return CreatedAtAction("GetMake", new { id = make.Id }, make);
         }
 
@@ -123,6 +138,8 @@ namespace CarRentalManagement.Server.Controllers
             //    return NotFound();
             //}
             //var make = await _context.Makes.FindAsync(id);
+
+            // GET first, then can DELETE.
             var make = await _unitOfWork.Makes.Get(q => q.Id == id);
             if (make == null)
             {
@@ -138,6 +155,8 @@ namespace CarRentalManagement.Server.Controllers
         }
 
         //private bool MakeExists(int id)
+
+        // Makes this async.
         private async Task<bool> MakeExists(int id)
         {
             //return (_context.Makes?.Any(e => e.Id == id)).GetValueOrDefault();
